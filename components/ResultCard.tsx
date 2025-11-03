@@ -42,10 +42,10 @@ export default function ResultCard({ result, loading }: ResultCardProps) {
       </h2>
 
       <div className="text-center mb-6">
-        <h3 className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mb-2 capitalize">
+        <h3 className="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400 mb-2 capitalize">
           {result.dish_name}
         </h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
+        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
           Source: {result.source}
         </p>
       </div>
@@ -79,7 +79,7 @@ export default function ResultCard({ result, loading }: ResultCardProps) {
         </p>
         <p
           id="total_calories"
-          className="text-5xl font-bold text-emerald-600 dark:text-emerald-400"
+          className="text-4xl sm:text-5xl font-bold text-emerald-600 dark:text-emerald-400"
         >
           {result.total_calories}
         </p>

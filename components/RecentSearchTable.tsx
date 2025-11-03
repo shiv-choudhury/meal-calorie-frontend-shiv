@@ -24,13 +24,13 @@ export default function RecentSearchesTable({
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <h2 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">
           Recent Searches
         </h2>
         {searches.length > 0 && (
           <button
             onClick={onClearAll}
-            className="flex items-center gap-2 px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-all"
+            className="text-sm  flex items-center gap-2 px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-all"
           >
             <Trash2 className="w-4 h-4" />
             Clear All
