@@ -1,5 +1,6 @@
 import axios from "axios";
 
+// const BaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 const BaseUrl = "https://flybackend-misty-feather-6458.fly.dev/";
 
 export const getHeader = async (token: string | null) => {
