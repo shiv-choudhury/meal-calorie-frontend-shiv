@@ -31,6 +31,7 @@ export default function MealSearchForm({
             Dish Name
           </label>
           <input
+            name="dishname"
             disabled={loading}
             type="text"
             value={dishName}
@@ -45,6 +46,7 @@ export default function MealSearchForm({
             Servings
           </label>
           <input
+            name="servings"
             disabled={loading}
             type="number"
             value={servings}
@@ -56,6 +58,7 @@ export default function MealSearchForm({
         </div>
 
         <button
+          id="search-btn"
           onClick={handleSubmit}
           disabled={loading || !dishName || !servings}
           className="w-full py-3 bg-linear-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-lg shadow-emerald-500/30 transition-all transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"

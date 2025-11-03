@@ -109,7 +109,7 @@ export default function NutriTrackLogin() {
                 }}
                 render={({ field }) => (
                   <InputWithLabel
-                    inputprops={{ name: "email" }}
+                    inputprops={{ name: "email", disabled: loading }}
                     placeholder="Enter your email"
                     onChange={field.onChange}
                     value={field.value}
@@ -131,7 +131,7 @@ export default function NutriTrackLogin() {
                 }}
                 render={({ field }) => (
                   <InputWithLabel
-                    inputprops={{ name: "password" }}
+                    inputprops={{ name: "password", disabled: loading }}
                     placeholder="Enter your password"
                     onChange={field.onChange}
                     value={field.value}

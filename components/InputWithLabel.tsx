@@ -19,8 +19,7 @@ export default function InputWithLabel(props: InputWithLabelProps) {
     error,
     placeholder,
     isPassword = false,
-
-    ...inputprops
+    inputprops
   } = props;
   const [showPassword, setShowPassword] = useState(false);
 

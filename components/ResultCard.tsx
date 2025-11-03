@@ -64,7 +64,10 @@ export default function ResultCard({ result, loading }: ResultCardProps) {
           <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
             CALS / SERVING
           </p>
-          <p className="text-3xl font-bold text-gray-900 dark:text-white">
+          <p
+            id="calories_per_serving"
+            className="text-3xl font-bold text-gray-900 dark:text-white"
+          >
             {result.calories_per_serving}
           </p>
         </div>
@@ -74,7 +77,10 @@ export default function ResultCard({ result, loading }: ResultCardProps) {
         <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300 mb-2">
           TOTAL CALORIES
         </p>
-        <p className="text-5xl font-bold text-emerald-600 dark:text-emerald-400">
+        <p
+          id="total_calories"
+          className="text-5xl font-bold text-emerald-600 dark:text-emerald-400"
+        >
           {result.total_calories}
         </p>
       </div>

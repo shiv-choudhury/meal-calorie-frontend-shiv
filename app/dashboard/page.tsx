@@ -66,6 +66,7 @@ function DashboardHeader() {
             <ThemeToggleButton />
 
             <button
+              id="logout-btn"
               onClick={handleLogout}
               className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
             >

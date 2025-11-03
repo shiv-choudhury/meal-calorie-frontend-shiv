@@ -7,6 +7,7 @@ export default function ThemeToggleButton() {
 
   return (
     <button
+      id="theme-toggle"
       onClick={() => toggleTheme()}
       className="p-3 rounded-full bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm hover:bg-white/80 dark:hover:bg-gray-800/80 transition-all shadow-lg"
     >
