@@ -1,3 +1,5 @@
+import Spinner from "@/components/Spinner";
+
 interface CalorieResult {
   dish_name: string;
   servings: number;
@@ -12,6 +14,17 @@ interface ResultCardProps {
 }
 
 export default function ResultCard({ result, loading }: ResultCardProps) {
+  if (loading) {
+    return (
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 flex flex-col items-center justify-center min-h-[400px]">
+        <div role="status" className="flex flex-col items-center gap-4">
+          <Spinner size={48} className="text-emerald-600" />
+          <p className="text-gray-600 dark:text-gray-300">Loading results…</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!result) {
     return (
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 flex items-center justify-center min-h-[400px]">

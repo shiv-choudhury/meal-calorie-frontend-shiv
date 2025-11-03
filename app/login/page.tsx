@@ -7,11 +7,14 @@ import { useForm, Controller } from "react-hook-form";
 
 import { login } from "../api/auth";
 import InputWithLabel from "@/components/InputWithLabel";
+import useAuthStore from "@/store/authStore";
 
 export default function NutriTrackLogin() {
   const router = useRouter();
   const [darkMode, setDarkMode] = useState(true);
   const [loading, setLoading] = useState(false);
+  const setToken = useAuthStore((s) => s.setToken);
+  const setUser = useAuthStore((s) => s.setUser);
 
   type FormValues = {
     email: string;
@@ -30,19 +33,22 @@ export default function NutriTrackLogin() {
   });
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log("Form submitted:", data);
     try {
       setLoading(true);
       const response: any = await login(data);
-      console.log("login response", response?.data);
+
       if (response?.error) {
         toast.error(response.error);
         return;
       } else {
         toast.success(response?.message || "Logged in successfully");
+
+        // store email and token
         if (response?.data?.token) {
+          setToken(response.data.token);
           localStorage.setItem("token", response.data.token);
         }
+        setUser({ email: data.email });
         router.push("/dashboard");
       }
     } catch (error: any) {

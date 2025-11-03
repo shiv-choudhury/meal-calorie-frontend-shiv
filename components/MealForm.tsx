@@ -31,6 +31,7 @@ export default function MealSearchForm({
             Dish Name
           </label>
           <input
+            disabled={loading}
             type="text"
             value={dishName}
             onChange={(e) => setDishName(e.target.value)}
@@ -44,6 +45,7 @@ export default function MealSearchForm({
             Servings
           </label>
           <input
+            disabled={loading}
             type="number"
             value={servings}
             onChange={(e) => setServings(e.target.value)}

@@ -8,6 +8,8 @@ import RecentSearchesTable from "@/components/RecentSearchTable";
 import ResultCard from "@/components/ResultCard";
 import MealSearchForm from "@/components/MealForm";
 import { getCalories } from "../api/auth";
+import useAuthStore from "@/store/authStore";
+import useMealStore from "@/store/mealStore";
 
 interface CalorieResult {
   dish_name: string;
@@ -27,9 +29,14 @@ interface HeaderProps {
 }
 
 function DashboardHeader({ darkMode, setDarkMode }: HeaderProps) {
+  const router = useRouter();
+  const { user } = useAuthStore((state) => state);
+
   const handleLogout = () => {
+    useAuthStore.getState().clearAuth();
+    useMealStore.getState().clearSearches();
     localStorage.removeItem("token");
-    window.location.href = "/login";
+    router.push("/login");
   };
 
   return (
@@ -50,11 +57,13 @@ function DashboardHeader({ darkMode, setDarkMode }: HeaderProps) {
           <div className="flex items-center gap-4">
             <div className="text-right hidden sm:block">
               <p className="text-sm font-medium text-gray-900 dark:text-white">
-                shiv test
+                {user?.email || "User"}
               </p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">
-                shiv@gmail.com
-              </p>
+              {user?.firstName && (
+                <p className="text-xs text-gray-600 dark:text-gray-400">
+                  {user?.firstName}
+                </p>
+              )}
             </div>
 
             <button
@@ -83,25 +92,19 @@ function DashboardHeader({ darkMode, setDarkMode }: HeaderProps) {
 
 export default function NutriTrackDashboard() {
   const router = useRouter();
+  const { token } = useAuthStore((state) => state);
   const [darkMode, setDarkMode] = useState<boolean>(true);
   const [result, setResult] = useState<CalorieResult | null>(null);
-  const [recentSearches, setRecentSearches] = useState<SearchHistory[]>([]);
+  const recentSearches = useMealStore((s) => s.searches);
+  const addSearch = useMealStore((s) => s.addSearch);
+  const clearSearches = useMealStore((s) => s.clearSearches);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    const savedSearches = localStorage.getItem("nutritrack_searches");
-    if (savedSearches) {
-      try {
-        setRecentSearches(JSON.parse(savedSearches));
-      } catch (error) {
-        console.error("Error loading search history:", error);
-      }
+    if (!token) {
+      router.push("/login");
     }
   }, []);
-
-  const saveToLocalStorage = (searches: SearchHistory[]) => {
-    localStorage.setItem("nutritrack_searches", JSON.stringify(searches));
-  };
 
   const handleSearch = async (dishName: string, servings: number) => {
     try {
@@ -111,7 +114,6 @@ export default function NutriTrackDashboard() {
         servings: servings
       };
       const response: any = await getCalories(params);
-      console.log("response", response);
 
       const data = response.data;
 
@@ -130,16 +132,14 @@ export default function NutriTrackDashboard() {
           hour12: true
         })
       };
-
-      const updatedSearches = [newSearch, ...recentSearches];
-      setRecentSearches(updatedSearches);
-      saveToLocalStorage(updatedSearches);
+      addSearch(newSearch);
     } catch (error: any) {
       if (error?.response?.data?.error === "Invalid token") {
         toast.error("Session expired. Please login again.");
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        localStorage.removeItem("nutritrack_searches");
+
+        // clear persisted auth and searches
+        useAuthStore.getState().clearAuth();
+        useMealStore.getState().clearSearches();
         router.push("/login");
       } else {
         console.error("Error fetching calories:", error);
@@ -152,8 +152,7 @@ export default function NutriTrackDashboard() {
 
   const handleClearAll = () => {
     if (window.confirm("Are you sure you want to clear all search history?")) {
-      setRecentSearches([]);
-      localStorage.removeItem("nutritrack_searches");
+      clearSearches();
     }
   };
 
