@@ -13,7 +13,7 @@ export default function ThemeToggleButton() {
       {darkMode === "dark" ? (
         <Sun className="w-5 h-5 text-yellow-500" />
       ) : (
-        <Moon className="w-5 h-5 text-white" />
+        <Moon className="w-5 h-5 text-black dark:text-white" />
       )}
     </button>
   );
