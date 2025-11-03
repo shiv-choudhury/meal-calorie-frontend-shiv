@@ -1,36 +1,54 @@
 "use client";
 import React, { useState } from "react";
-import { Eye, EyeOff, Apple, Moon, Sun } from "lucide-react";
-import { register } from "../api/auth";
+import toast from "react-hot-toast";
+import { Apple, Moon, Sun } from "lucide-react";
+import { register as registerUser } from "../api/auth";
+import { useRouter } from "next/navigation";
+import { useForm, Controller } from "react-hook-form";
+import InputWithLabel from "@/components/InputWithLabel";
 
 export default function NutriTrackSignup() {
-  const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: ""
+  type FormValues = {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+  };
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<FormValues>({
+    defaultValues: { firstName: "", lastName: "", email: "", password: "" }
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    console.log("Form submitted:", formData);
-
+  const onSubmit = handleSubmit(async (data) => {
+    console.log("Form submitted:", data);
     try {
-      const response = await register(formData);
-      console.log(response);
-    } catch (error) {
-      console.log(error);
+      setLoading(true);
+      const response: any = await registerUser(data);
+      console.log("response signup", response?.data);
+      if (response?.error) {
+        toast.error(response.error);
+        return;
+      } else {
+        toast.success(response?.message || "Account created successfully");
+        if (response?.data?.token) {
+          localStorage.setItem("token", response.data.token);
+        }
+        router.push("/dashboard");
+      }
+    } catch (error: any) {
+      toast.error(error?.response?.data?.error || "Something went wrong");
+      console.error(error?.response?.data?.error || error);
+    } finally {
+      setLoading(false);
     }
-  };
+  });
 
   return (
     <div className={darkMode ? "dark" : "light"}>
@@ -81,85 +99,96 @@ export default function NutriTrackSignup() {
               {/* Name Fields */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    First Name
-                  </label>
-                  <input
-                    type="text"
+                  <Controller
+                    control={control}
                     name="firstName"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    placeholder="John"
-                    className="w-full px-4 py-3 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 transition-all"
+                    rules={{ required: "Please enter your first name" }}
+                    render={({ field }) => (
+                      <InputWithLabel
+                        inputprops={{ name: "firstName" }}
+                        placeholder="John"
+                        onChange={field.onChange}
+                        value={field.value}
+                        label="First Name"
+                        error={errors.firstName?.message as string}
+                      />
+                    )}
                   />
                 </div>
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Last Name
-                  </label>
-                  <input
-                    type="text"
+                  <Controller
+                    control={control}
                     name="lastName"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    placeholder="Doe"
-                    className="w-full px-4 py-3 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 transition-all"
+                    rules={{ required: "Please enter your last name" }}
+                    render={({ field }) => (
+                      <InputWithLabel
+                        inputprops={{ name: "lastName" }}
+                        placeholder="Doe"
+                        onChange={field.onChange}
+                        value={field.value}
+                        label="Last Name"
+                        error={errors.lastName?.message as string}
+                      />
+                    )}
                   />
                 </div>
               </div>
 
               {/* Email Field */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Email address
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="Enter your email"
-                  className="w-full px-4 py-3 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 transition-all"
-                />
-              </div>
+              <Controller
+                control={control}
+                name="email"
+                rules={{
+                  required: "Please enter your email",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Please enter a valid email address"
+                  }
+                }}
+                render={({ field }) => (
+                  <InputWithLabel
+                    inputprops={{ name: "email" }}
+                    placeholder="Enter your email"
+                    onChange={field.onChange}
+                    value={field.value}
+                    label="Email address"
+                    error={errors.email?.message as string}
+                  />
+                )}
+              />
 
               {/* Password Field */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Password
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
+              <Controller
+                control={control}
+                name="password"
+                rules={{
+                  required: "Please enter your password",
+                  minLength: {
+                    value: 6,
+                    message: "Password must be at least 6 characters"
+                  }
+                }}
+                render={({ field }) => (
+                  <InputWithLabel
+                    inputprops={{ name: "password" }}
                     placeholder="Create a password"
-                    className="w-full px-4 py-3 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 transition-all pr-12"
+                    onChange={field.onChange}
+                    value={field.value}
+                    label="Password"
+                    isPassword={true}
+                    error={errors.password?.message as string}
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="w-5 h-5" />
-                    ) : (
-                      <Eye className="w-5 h-5" />
-                    )}
-                  </button>
-                </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                  Password must be at least 6 characters long
-                </p>
-              </div>
+                )}
+              />
 
               {/* Submit Button */}
               <button
-                onClick={handleSubmit}
-                className="w-full py-4 bg-linear-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-semibold rounded-xl shadow-lg shadow-emerald-500/50 dark:shadow-emerald-500/30 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+                onClick={onSubmit}
+                disabled={loading}
+                className="w-full disabled:cursor-not-allowed disabled:opacity-50 py-4 bg-linear-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-semibold rounded-xl shadow-lg shadow-emerald-500/50 dark:shadow-emerald-500/30 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
               >
-                Create Account
+                {loading ? "Creating Account..." : "Create Account"}
               </button>
             </div>
 
