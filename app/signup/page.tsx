@@ -1,19 +1,21 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
-import { Apple, Moon, Sun } from "lucide-react";
+import { Apple } from "lucide-react";
 import { register as registerUser } from "../api/auth";
 import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import InputWithLabel from "@/components/InputWithLabel";
 import useAuthStore from "@/store/authStore";
+import ThemeToggleButton from "@/components/ThemeToggleButton";
 
 export default function NutriTrackSignup() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [darkMode, setDarkMode] = useState(true);
+
   const setToken = useAuthStore((s) => s.setToken);
   const setUser = useAuthStore((s) => s.setUser);
+
   type FormValues = {
     firstName: string;
     lastName: string;
@@ -55,7 +57,7 @@ export default function NutriTrackSignup() {
   });
 
   return (
-    <div className={darkMode ? "dark" : "light"}>
+    <div>
       <div className="min-h-screen bg-linear-to-br from-emerald-50 via-teal-50 to-cyan-100 dark:from-gray-900 dark:via-teal-900 dark:to-emerald-950 transition-colors duration-300">
         {/* Header */}
         <div className="flex items-center justify-between p-6">
@@ -73,16 +75,7 @@ export default function NutriTrackSignup() {
             </div>
           </div>
 
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            className="p-3 rounded-full bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm hover:bg-white/80 dark:hover:bg-gray-800/80 transition-all shadow-lg"
-          >
-            {darkMode ? (
-              <Sun className="w-5 h-5 text-yellow-500" />
-            ) : (
-              <Moon className="w-5 h-5 text-gray-700" />
-            )}
-          </button>
+          <ThemeToggleButton />
         </div>
 
         {/* Main Content */}

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { Apple, Moon, Sun, LogOut } from "lucide-react";
+import useThemeStore from "@/store/themeStore";
 
 import RecentSearchesTable from "@/components/RecentSearchTable";
 import ResultCard from "@/components/ResultCard";
@@ -10,6 +11,7 @@ import MealSearchForm from "@/components/MealForm";
 import { getCalories } from "../api/auth";
 import useAuthStore from "@/store/authStore";
 import useMealStore from "@/store/mealStore";
+import ThemeToggleButton from "@/components/ThemeToggleButton";
 
 interface CalorieResult {
   dish_name: string;
@@ -23,12 +25,7 @@ interface SearchHistory extends CalorieResult {
   date: string;
 }
 
-interface HeaderProps {
-  darkMode: boolean;
-  setDarkMode: (value: boolean) => void;
-}
-
-function DashboardHeader({ darkMode, setDarkMode }: HeaderProps) {
+function DashboardHeader() {
   const router = useRouter();
   const { user } = useAuthStore((state) => state);
 
@@ -66,16 +63,7 @@ function DashboardHeader({ darkMode, setDarkMode }: HeaderProps) {
               )}
             </div>
 
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
-            >
-              {darkMode ? (
-                <Sun className="w-5 h-5 text-yellow-500" />
-              ) : (
-                <Moon className="w-5 h-5 text-gray-700" />
-              )}
-            </button>
+            <ThemeToggleButton />
 
             <button
               onClick={handleLogout}
@@ -93,11 +81,11 @@ function DashboardHeader({ darkMode, setDarkMode }: HeaderProps) {
 export default function NutriTrackDashboard() {
   const router = useRouter();
   const { token } = useAuthStore((state) => state);
-  const [darkMode, setDarkMode] = useState<boolean>(true);
-  const [result, setResult] = useState<CalorieResult | null>(null);
   const recentSearches = useMealStore((s) => s.searches);
   const addSearch = useMealStore((s) => s.addSearch);
   const clearSearches = useMealStore((s) => s.clearSearches);
+
+  const [result, setResult] = useState<CalorieResult | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -157,9 +145,9 @@ export default function NutriTrackDashboard() {
   };
 
   return (
-    <div className={darkMode ? "dark" : ""}>
+    <div>
       <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-950 dark:to-gray-900 transition-colors duration-300">
-        <DashboardHeader darkMode={darkMode} setDarkMode={setDarkMode} />
+        <DashboardHeader />
 
         <main className="max-w-7xl mx-auto px-6 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
